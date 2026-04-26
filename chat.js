@@ -34,10 +34,10 @@ function renderChat() {
   const session = getSession();
   const isHelper = session?.role === 'helper';
   const lang = currentLang;
-  
+
   const contacts = isHelper ? (typeof MOCK_CHAT_REQUESTS !== 'undefined' ? MOCK_CHAT_REQUESTS : []) : HELPERS;
   const listTitle = isHelper ? '💬 ' + t('pendingChats') : '💬 ' + t('availableHelpers');
-  
+
   const contactListHTML = contacts.map(c => `
     <div class="helper-item ${activeContactId === c.id ? 'active' : ''}" onclick="selectContact(${c.id})" id="contact-${c.id}">
       <div class="helper-avatar">${c.initials}</div>
@@ -110,9 +110,9 @@ function selectContact(id) {
       chatMessages[id].push({ from: 'them', text: contact.msg[lang], time: '10:00 AM' });
     }
   }
-  
+
   renderMessages(id);
-  
+
   // If PWD and no messages, trigger helper auto reply
   if (!isHelper && chatMessages[id].length === 0) {
     setTimeout(() => addAutoReply(id), 800);
@@ -141,27 +141,27 @@ function sendMessage() {
   const text = input?.value.trim();
   if (!text) return;
   input.value = '';
-  
+
   const now = new Date();
   const time = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-  
+
   if (!chatMessages[activeContactId]) chatMessages[activeContactId] = [];
   chatMessages[activeContactId].push({ from: 'me', text, time });
   renderMessages(activeContactId);
-  
+
   setTimeout(() => addAutoReply(activeContactId), 1000 + Math.random() * 1200);
 }
 
 function addAutoReply(id) {
   const session = getSession();
   const isHelper = session?.role === 'helper';
-  
+
   const replies = isHelper ? PWD_AUTO_REPLIES[currentLang] : AUTO_REPLIES[currentLang];
   const text = replies[Math.floor(Math.random() * replies.length)];
-  
+
   const now = new Date();
   const time = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-  
+
   if (!chatMessages[id]) chatMessages[id] = [];
   chatMessages[id].push({ from: 'them', text, time });
   renderMessages(id);
